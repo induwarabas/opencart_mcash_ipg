@@ -24,7 +24,7 @@ class ModelPaymentMCashIpg extends Model {
     }
 
     public function uninstall() {
-        $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "mcash_ipg_orders`;");
+        //$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "mcash_ipg_orders`;");
         $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "mcash_ipg_passwords`;");
     }
 }
