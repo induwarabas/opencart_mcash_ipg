@@ -40,7 +40,7 @@ class ControllerPaymentMCashIpg extends Controller {
 		// Build Http query using params
 		$query = http_build_query ($params);
 		// Create Http context details
-		$contextData = array ('method' => 'POST','header' => "Connection: close\r\n"."Content-Length: ".strlen($query)."\r\n",'content'=> $query );
+		$contextData = array ('method' => 'POST','header' => "Content-Type: application/x-www-form-urlencoded\r\n"."Connection: close\r\n"."Content-Length: ".strlen($query)."\r\n",'content'=> $query );
 		// Create context resource for our request
 		$context = stream_context_create (array ( 'http' => $contextData ));
 		// Read page rendered as result of your POST request

@@ -2,9 +2,13 @@
 class ModelPaymentMCashIpg extends Model {
 	public function getMethod($address, $total) {
 		$this->load->language('payment/mcash_ipg');
-
+		$terms = '';
+		if ($this->config->get('mcash_ipg_mode') == "Test") {
+			$terms = 'Test';
+		}
 		$method_data = array(
 			'code'     => 'mcash_ipg',
+			'terms'     => $terms,
 			'title'    => $this->language->get('text_title'),
 			'sort_order' => $this->config->get('mcash_ipg_sort_order')
 		);
