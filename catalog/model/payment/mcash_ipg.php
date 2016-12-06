@@ -18,11 +18,15 @@ class ModelPaymentMCashIpg extends Model {
 
 	public function getMcashInvoice($orderID) {
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "mcash_ipg_orders` (`order_id`) VALUES ('" . $orderID . "')");
-		return "MCASH-".$this->db->getLastId();
+		return "O-".$this->db->getLastId();
 	}
 
 	public function getOrderIDByInvoice($invoice) {
-		$qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "mcash_ipg_orders`  WHERE id = '" . $invoice . "')");
+		$pieces = explode("-", $invoice);
+		if (count($pieces) != 2) {
+			return "0";
+		}
+		$qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "mcash_ipg_orders`  WHERE id = '" . $pieces[1] . "'");
 		if ($qry->num_rows) {
 			return $qry->row['order_id'];
 		} else {
@@ -38,7 +42,7 @@ class ModelPaymentMCashIpg extends Model {
 	}
 
 	public function getPassword($invoiceID) {
-		$qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "mcash_ipg_passwords`  WHERE `invoice_id` = '" . $invoiceID . "')");
+		$qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "mcash_ipg_passwords`  WHERE `invoice_id` = '" . $invoiceID . "'");
 		if ($qry->num_rows) {
 			return $qry->row;
 		} else {
