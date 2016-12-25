@@ -16,6 +16,9 @@ class ControllerPaymentMCashIpg extends Controller {
 		$this->load->model('payment/mcash_ipg');
 		
 		$merchantID = $this->config->get('mcash_ipg_merchant_id');
+		$ipgMode = $this->config->get('mcash_ipg_mode');
+		
+		
 		$mobileNumber = $this->config->get('mcash_ipg_mobile_number');
 		$tokenPassword = $this->config->get('mcash_ipg_token_password');
 		$orderID = $this->session->data['order_id'];
@@ -25,6 +28,9 @@ class ControllerPaymentMCashIpg extends Controller {
 		$data['orderID'] = $this->session->data['order_id'];
 
 		$redirect_url = "https://www.mcash.lk/ipg/payment.html";
+		if ($ipgMode == "Live") {
+			$redirect_url = "https://ipg.mobitel.lk/mcash/payment.html";
+		}
 		// Create map with request parameters
 		$params = array (
 			'merchant_id' => $merchantID,
@@ -41,6 +47,10 @@ class ControllerPaymentMCashIpg extends Controller {
 		$context = stream_context_create (array ( 'http' => $contextData ));
 		// Read page rendered as result of your POST request
 		$token_url = "https://www.mcash.lk/ipg/auth/tokens.html";
+		
+		if ($ipgMode == "Live") {
+			$token_url = "https://ipg.mobitel.lk/mcash/auth/tokens.html";
+		}
 		//$token_url = "https://www.mcash.lk/ipg/auth/tokens.html?merchant_id=BUEA00-5999&merchant_mobile=0710460174&token_pwd=BUEY0174&customer_mobile=estr&merchant_invoice_id=ydrssd&amount=90.00";
 
 		$token = file_get_contents ($token_url ,false,$context);
