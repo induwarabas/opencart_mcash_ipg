@@ -1,9 +1,9 @@
 <?php
-class ModelPaymentMCashIpg extends Model {
+class ModelExtensionPaymentMCashIpg extends Model {
 	public function getMethod($address, $total) {
-		$this->load->language('payment/mcash_ipg');
+		$this->load->language('extension/payment/mcash_ipg');
 		$terms = '';
-		if ($this->config->get('mcash_ipg_mode') == "Test") {
+		if ($this->config->get('payment_mcash_ipg_mode') == "Test") {
 			$terms = 'Test';
 		}
 		$method_data = array(
@@ -18,7 +18,7 @@ class ModelPaymentMCashIpg extends Model {
 
 	public function getMcashInvoice($orderID) {
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "mcash_ipg_orders` (`order_id`) VALUES ('" . $orderID . "')");
-		return "O-".$this->db->getLastId();
+		return date('YmdHis').'-'.$this->db->getLastId();
 	}
 
 	public function getOrderIDByInvoice($invoice) {

@@ -1,29 +1,29 @@
 <?php
-class ControllerPaymentMCashIpg extends Controller {
+class ControllerExtensionPaymentMCashIpg extends Controller {
     public function index() {
 		$data['button_confirm'] = $this->language->get('button_confirm');
 
 		$data['text_loading'] = $this->language->get('text_loading');
 
-		$data['continue'] = $this->url->link('payment/mcash_ipg/processpay');
-		$this->load->model('payment/mcash_ipg');
+		$data['continue'] = $this->url->link('extension/payment/mcash_ipg/processpay');
+		$this->load->model('extension/payment/mcash_ipg');
 		
-		return $this->load->view('payment/mcash_ipg', $data);
+		return $this->load->view('extension/payment/mcash_ipg', $data);
     }
 
 	public function processpay() {
 		$this->load->model('checkout/order');
-		$this->load->model('payment/mcash_ipg');
+		$this->load->model('extension/payment/mcash_ipg');
 		
-		$merchantID = $this->config->get('mcash_ipg_merchant_id');
-		$ipgMode = $this->config->get('mcash_ipg_mode');
+		$merchantID = $this->config->get('payment_mcash_ipg_merchant_id');
+		$ipgMode = $this->config->get('payment_mcash_ipg_mode');
 		
 		
-		$mobileNumber = $this->config->get('mcash_ipg_mobile_number');
-		$tokenPassword = $this->config->get('mcash_ipg_token_password');
+		$mobileNumber = $this->config->get('payment_mcash_ipg_mobile_number');
+		$tokenPassword = $this->config->get('payment_mcash_ipg_token_password');
 		$orderID = $this->session->data['order_id'];
 		$order_info = $this->model_checkout_order->getOrder($orderID);
-		$invoice = $this->model_payment_mcash_ipg->getMcashInvoice($orderID);
+		$invoice = $this->model_extension_payment_mcash_ipg->getMcashInvoice($orderID);
 
 		$data['orderID'] = $this->session->data['order_id'];
 
@@ -68,9 +68,9 @@ class ControllerPaymentMCashIpg extends Controller {
 	}
 
 	public function callback() {
-		$this->load->model('payment/mcash_ipg');
+		$this->load->model('extension/payment/mcash_ipg');
 		
-		//$this->model_payment_mcash_ipg->insertPassword('xxxx', '100', 'yyyy', 'zzzz', '400', 'rwew', 'asa');
+		//$this->extension_model_payment_mcash_ipg->insertPassword('xxxx', '100', 'yyyy', 'zzzz', '400', 'rwew', 'asa');
 		
 		$amount = $this->request->post['amount'];
 		$invoice_id = $this->request->post['invoice_id'];
@@ -81,9 +81,9 @@ class ControllerPaymentMCashIpg extends Controller {
 		$sha256_checksum = $this->request->post['sha256_checksum'];
 
 
-		$merchantID = $this->config->get('mcash_ipg_merchant_id');
-		$mobileNumber = $this->config->get('mcash_ipg_mobile_number');
-		$tokenPassword = $this->config->get('mcash_ipg_token_password');
+		$merchantID = $this->config->get('payment_mcash_ipg_merchant_id');
+		$mobileNumber = $this->config->get('payment_mcash_ipg_mobile_number');
+		$tokenPassword = $this->config->get('payment_mcash_ipg_token_password');
 
 		$s = $tokenPassword . $merchantID;
 		// $s should be : 5dH3vaCNxuLEmgnQLT/pK4V04n+OpubVOxCAFAA7x9U=
@@ -100,10 +100,10 @@ class ControllerPaymentMCashIpg extends Controller {
 		// should be BZVs8ygfCUyZHbYWKLcg3IC6v3oR5U0t
 		$plain_verification_password = mdecrypt_generic($cipher, base64_decode ($encrypted_verification_password));
 		// since you are at callback.php store your plain_verification_password together with invoice_id as it is required later in success page or failure page
-		$this->model_payment_mcash_ipg->insertPassword($invoice_id, $amount, $mcashReferenceID, $customerMobile, $statusCode, $plain_verification_password, $sha256_checksum);
+		$this->extension_model_payment_mcash_ipg->insertPassword($invoice_id, $amount, $mcashReferenceID, $customerMobile, $statusCode, $plain_verification_password, $sha256_checksum);
 		mcrypt_generic_deinit ( $cipher );
 		$data['test'] = "test";
-		return $this->load->view('payment/mcash_ipg_response', $data);
+		return $this->load->view('extension/payment/mcash_ipg_response', $data);
 		
 	}
 
@@ -113,18 +113,18 @@ class ControllerPaymentMCashIpg extends Controller {
 		// ******************
 		// now after customer redirection (either in your failure or success url )you have payment and invoice_id parameters
 
-		$this->load->model('payment/mcash_ipg');
+		$this->load->model('extension/payment/mcash_ipg');
 		$this->load->model('checkout/order');
-		$this->load->language('payment/mcash_ipg');
+		$this->load->language('extension/payment/mcash_ipg');
 
 		$payment = $this->request->get['payment'];
 		$invoiceID = $this->request->get['invoice_id'];
-		$pass = $this->model_payment_mcash_ipg->getPassword($invoiceID);
-		$orderID = $this->model_payment_mcash_ipg->getOrderIDByInvoice($invoiceID);
+		$pass = $this->model_extension_payment_mcash_ipg->getPassword($invoiceID);
+		$orderID = $this->model_extension_payment_mcash_ipg->getOrderIDByInvoice($invoiceID);
 
-		$merchantID = $this->config->get('mcash_ipg_merchant_id');
-		$mobileNumber = $this->config->get('mcash_ipg_mobile_number');
-		$tokenPassword = $this->config->get('mcash_ipg_token_password');
+		$merchantID = $this->config->get('payment_mcash_ipg_merchant_id');
+		$mobileNumber = $this->config->get('payment_mcash_ipg_mobile_number');
+		$tokenPassword = $this->config->get('payment_mcash_ipg_token_password');
 
 		$s = $tokenPassword . $merchantID;
 		// $s should be : 5dH3vaCNxuLEmgnQLT/pK4V04n+OpubVOxCAFAA7x9U=
@@ -155,7 +155,7 @@ class ControllerPaymentMCashIpg extends Controller {
 			
 			if ($info[0] == $pass["invoice_id"] && $info[1] == $pass["amount"] &&  $info[2] == $pass["customer_mobile"]  &&  $info[3] == $pass["status_code"] &&  substr($info[4], 0, 20) == substr($pass["mcash_reference_id"], 0, 20)) {
 				$comment = "Payment done via mCash internet payment gateway with mCash reference number ".$pass["mcash_reference_id"]." and the mobile number ".$pass["customer_mobile"];
-				$this->model_checkout_order->addOrderHistory($orderID, $this->config->get('mcash_ipg_order_status_id'), $comment,true);
+				$this->model_checkout_order->addOrderHistory($orderID, $this->config->get('payment_mcash_ipg_order_status_id'), $comment,true);
 				$this->response->redirect($this->url->link('checkout/success', '', true));
 			} else {
 				$this->session->data['failure_text'] = sprintf($this->language->get('text_failure_message'), "Internal Service Error", $this->url->link('information/contact'));
@@ -166,12 +166,12 @@ class ControllerPaymentMCashIpg extends Controller {
 	}
 
 	public function paymentfailure() {
-		$this->load->model('payment/mcash_ipg');
-		$this->load->language('payment/mcash_ipg');
+		$this->load->model('extension/payment/mcash_ipg');
+		$this->load->language('extension/payment/mcash_ipg');
 
 		//$payment = $this->request->get['payment'];
 		$invoiceID = $this->request->get['invoice_id'];
-		$pass = $this->model_payment_mcash_ipg->getPassword($invoiceID);
+		$pass = $this->model_extension_payment_mcash_ipg->getPassword($invoiceID);
 		
 		$reason[1000] = "Transaction Successful";
 		$reason[1001] = "Duplicate Request";
