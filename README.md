@@ -17,6 +17,7 @@ gateway through the admin interface.
 Mobitel setup
 -------------
 Give following URLs to Mobitel for registering your site.
+
 Note: Replace "online.shop.url" with your url.
 
 **Cancel URL**
